@@ -63,6 +63,17 @@ class TaskManager {
             });
         }
 
+
+        const saveEditButton = document.getElementById('saveEdit');
+        if (saveEditButton) {
+            saveEditButton.addEventListener('click', () => this.saveTaskEdit());
+            saveEditButton.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                this.saveTaskEdit();
+            });
+        }
+
+
         const closeModal = document.getElementById('closeModal');
         if (closeModal) {
             closeModal.addEventListener('click', () => this.closeModal('taskModal'));
