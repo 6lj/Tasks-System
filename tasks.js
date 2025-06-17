@@ -55,44 +55,75 @@ class TaskManager {
             });
         }
 
+        const editTaskForm = document.getElementById('editTaskForm');
+        if (editTaskForm) {
+            editTaskForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.saveTaskEdit();
+            });
+        }
+
         const closeModal = document.getElementById('closeModal');
         if (closeModal) {
             closeModal.addEventListener('click', () => this.closeModal('taskModal'));
+            closeModal.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                this.closeModal('taskModal');
+            });
         }
 
         const closeTaskModal = document.getElementById('closeTaskModal');
         if (closeTaskModal) {
             closeTaskModal.addEventListener('click', () => this.closeModal('taskDetailsModal'));
+            closeTaskModal.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                this.closeModal('taskDetailsModal');
+            });
         }
 
         const closeEditModal = document.getElementById('closeEditModal');
         if (closeEditModal) {
             closeEditModal.addEventListener('click', () => this.closeModal('editModal'));
+            closeEditModal.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                this.closeModal('editModal');
+            });
         }
 
         const editTask = document.getElementById('editTask');
         if (editTask) {
             editTask.addEventListener('click', () => this.openEditModal());
+            editTask.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                this.openEditModal();
+            });
         }
 
         const deleteTask = document.getElementById('deleteTask');
         if (deleteTask) {
             deleteTask.addEventListener('click', () => this.deleteTask());
+            deleteTask.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                this.deleteTask();
+            });
         }
 
         const cancelEdit = document.getElementById('cancelEdit');
         if (cancelEdit) {
             cancelEdit.addEventListener('click', () => this.closeModal('editModal'));
+            cancelEdit.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                this.closeModal('editModal');
+            });
         }
 
         const cancelAdd = document.getElementById('cancelAdd');
         if (cancelAdd) {
             cancelAdd.addEventListener('click', () => this.closeModal('taskModal'));
-        }
-
-        const saveEdit = document.getElementById('saveEdit');
-        if (saveEdit) {
-            saveEdit.addEventListener('click', () => this.saveTaskEdit());
+            cancelAdd.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                this.closeModal('taskModal');
+            });
         }
 
         document.addEventListener('click', (e) => {
@@ -101,9 +132,25 @@ class TaskManager {
             }
         });
 
+        document.addEventListener('touchend', (e) => {
+            if (e.target.classList.contains('modal')) {
+                e.preventDefault();
+                this.closeModal(e.target.id);
+            }
+        });
+
         const groupHeaders = document.querySelectorAll('.group-header');
         groupHeaders.forEach(header => {
             header.addEventListener('click', () => {
+                const group = header.parentElement;
+                group.classList.toggle('collapsed');
+                const toggle = header.querySelector('.group-toggle');
+                if (toggle) {
+                    toggle.classList.toggle('expanded');
+                }
+            });
+            header.addEventListener('touchend', (e) => {
+                e.preventDefault();
                 const group = header.parentElement;
                 group.classList.toggle('collapsed');
                 const toggle = header.querySelector('.group-toggle');
@@ -152,7 +199,7 @@ class TaskManager {
         this.renderTasks();
         this.updateStatistics();
         this.updateProgress();
-        taskForm.reset();
+        document.getElementById('taskForm').reset();
         this.setDefaultDueDate(); 
         this.closeModal('taskModal');
 
@@ -227,6 +274,10 @@ class TaskManager {
         `;
 
         taskElement.addEventListener('click', () => this.showTaskDetails(task.id));
+        taskElement.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            this.showTaskDetails(task.id);
+        });
         return taskElement;
     }
 
@@ -334,6 +385,7 @@ class TaskManager {
 
     saveTaskEdit() {
         const task = this.tasks.find(t => t.id === this.currentTaskId);
+        
         if (!task) return;
 
         const inputs = {
@@ -390,17 +442,29 @@ class TaskManager {
         feedback.textContent = message;
         document.body.appendChild(feedback);
 
-        setTimeout(() => feedback.remove(), 3500);
+        setTimeout(() => {
+            feedback.classList.add('show');
+            setTimeout(() => {
+                feedback.classList.remove('show');
+                setTimeout(() => feedback.remove(), 300);
+            }, 3500);
+        }, 10);
     }
 
     openModal(modalId) {
         const modal = document.getElementById(modalId);
-        if (modal) modal.classList.add('show');
+        if (modal) {
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden'; 
+        }
     }
 
     closeModal(modalId) {
         const modal = document.getElementById(modalId);
-        if (modal) modal.classList.remove('show');
+        if (modal) {
+            modal.classList.remove('show');
+            document.body.style.overflow = ''; 
+        }
     }
 
     createParticles() {
