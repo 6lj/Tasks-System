@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-ar="مدير المهام">Task Manager</title>
+    <link rel="stylesheet" href="tasks.css">
+    <style>
+
+        .lang-toggle {
+            margin-top: 10px; 
+        }
+    </style>
+</head>
+<body>
+    <div class="particles"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1 class="main-title" data-ar="مدير المهام">Task Manager</h1>
+            <p class="subtitle" data-ar="ضف مهامك وارجع لها وعدلها">Add your tasks, go back to them and edit them</p>
+            <button class="btn btn-primary lang-toggle" data-lang="ar">العربية</button>
+        </div>
+
+        <div class="main-grid">
+            <div class="glass-card stats-card">
+                <div class="stat-item">
+                    <span data-ar="إجمالي المهام">Total Tasks</span>
+                    <span class="stat-number">0</span>
+                </div>
+                <div class="stat-item">
+                    <span data-ar="مكتمل">Completed</span>
+                    <span class="stat-number">0</span>
+                </div>
+                <div class="stat-item">
+                    <span data-ar="قيد التقدم">In Progress</span>
+                    <span class="stat-number">0</span>
+                </div>
+                <div class="stat-item">
+                    <span data-ar="متعثر">Stuck</span>
+                    <span class="stat-number">0</span>
+                </div>
+            </div>
+
+            <div class="glass-card tasks-card">
+                <div class="task-controls">
+                    <button class="btn btn-primary" onclick="document.getElementById('taskModal').classList.add('show')" data-ar="✨ مهمة جديدة">
+                        ✨ New Task
+                    </button>
+                </div>
+
+                <div class="task-group">
+                    <div class="group-header">
+                        <span class="group-toggle">▶</span>
+                        <span class="group-title" data-ar="📋 للقيام به">To-Do</span>
+                        <span class="task-count">0</span>
+                    </div>
+                    <div id="todoTasks"></div>
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <span class="progress-percentage">0%</span>
+                </div>
+
+                <div class="task-group">
+                    <div class="group-header">
+                        <span class="group-toggle">▶</span>
+                        <span class="group-title" data-ar="✅ مكتمل">Completed</span>
+                        <span class="task-count">0</span>
+                    </div>
+                    <div id="completedTasks"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Task Modal -->
+    <div class="modal" id="taskModal">
+        <div class="modal-content glass-card">
+            <h2 data-ar="إنشاء مهمة جديدة">Create New Task</h2>
+            <span class="close-modal" id="closeModal">×</span>
+            <form id="taskForm">
+                <div class="form-group">
+                    <label for="taskName" data-ar="اسم المهمة *">Task Name *</label>
+                    <input type="text" id="taskName" class="form-input" placeholder="Enter task name..." data-ar-placeholder="أدخل اسم المهمة...">
+                </div>
+                <div class="form-group">
+                    <label for="taskStatus" data-ar="الحالة">Status</label>
+                    <select id="taskStatus" class="form-input">
+                        <option value="Working on it" data-ar="🔥 قيد العمل">🔥 Working on it</option>
+                        <option value="Done" data-ar="✅ مكتمل">✅ Done</option>
+                        <option value="Stuck" data-ar="🚫 متعثر">🚫 Stuck</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="taskDueDate" data-ar="تاريخ الاستحقاق">Due Date</label>
+                    <input type="date" id="taskDueDate" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label for="taskDescription" data-ar="الوصف">Description</label>
+                    <textarea id="taskDescription" class="form-input" placeholder="Add task description..." data-ar-placeholder="أضف وصف المهمة..."></textarea>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-secondary" id="cancelAdd" data-ar="إلغاء">Cancel</button>
+                    <button type="submit" class="btn btn-primary" data-ar="إنشاء المهمة">Create Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Task Details Modal -->
+    <div class="modal" id="taskDetailsModal">
+        <div class="modal-content glass-card">
+            <h2 data-ar="تفاصيل المهمة">Task Details</h2>
+            <span class="close-modal" id="closeTaskModal">×</span>
+            <div class="modal-body"></div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" id="deleteTask" data-ar="🗑️ حذف">🗑️ Delete</button>
+                <button class="btn btn-primary" id="editTask" data-ar="✏️ تعديل">✏️ Edit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Task Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-content glass-card">
+            <h2 data-ar="تعديل المهمة">Edit Task</h2>
+            <span class="close-modal" id="closeEditModal">×</span>
+         <form id="editTaskForm">
+    <div class="form-group">
+        <label for="editTaskName" data-ar="اسم المهمة *">Task Name *</label>
+        <input type="text" id="editTaskName" class="form-input">
+    </div>
+    <div class="form-group">
+        <label for="editTaskStatus" data-ar="الحالة">Status</label>
+        <select id="editTaskStatus" class="form-input">
+            <option value="Working on it" data-ar="🔥 قيد العمل">🔥 Working on it</option>
+            <option value="Done" data-ar="✅ مكتمل">✅ Done</option>
+            <option value="Stuck" data-ar="🚫 متعثر">🚫 Stuck</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="editTaskDueDate" data-ar="تاريخ الاستحقاق">Due Date</label>
+        <input type="date" id="editTaskDueDate" class="form-input">
+    </div>
+    <div class="form-group">
+        <label for="editTaskDescription" data-ar="الوصف">Description</label>
+        <textarea id="editTaskDescription" class="form-input"></textarea>
+    </div>
+    <div class="modal-buttons">
+        <button type="button" class="btn btn-secondary" id="cancelEdit" data-ar="إلغاء">Cancel</button>
+        <button type="button" class="btn btn-primary" id="saveEdit" data-ar="حفظ التغييرات">Save Changes</button>
+    </div>
+</form>
+        </div>
+    </div>
+
+    <script src="tasks.js"></script>
+    <script>
+        const langToggle = document.querySelector('.lang-toggle');
+        let currentLang = 'en';
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'ar' : 'en';
+            document.documentElement.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+            langToggle.textContent = currentLang === 'en' ? 'العربية' : 'English';
+            langToggle.setAttribute('data-lang', currentLang === 'en' ? 'ar' : 'en');
+
+            document.querySelectorAll('[data-ar]').forEach(elem => {
+                if (currentLang === 'ar') {
+                    elem.textContent = elem.getAttribute('data-ar');
+                } else {
+
+                    elem.textContent = elem.dataset.originalText || elem.textContent;
+                }
+            });
+
+            if (!document.querySelector('[data-ar]').dataset.originalText) {
+                document.querySelectorAll('[data-ar]').forEach(elem => {
+                    elem.dataset.originalText = elem.textContent;
+                });
+            }
+
+            document.querySelectorAll('[data-ar-placeholder]').forEach(elem => {
+                if (currentLang === 'ar') {
+                    elem.placeholder = elem.getAttribute('data-ar-placeholder');
+                } else {
+                    elem.placeholder = elem.dataset.originalPlaceholder || elem.placeholder;
+                }
+            });
+
+            if (!document.querySelector('[data-ar-placeholder]').dataset.originalPlaceholder) {
+                document.querySelectorAll('[data-ar-placeholder]').forEach(elem => {
+                    elem.dataset.originalPlaceholder = elem.placeholder;
+                });
+            }
+
+            document.querySelectorAll('select option').forEach(option => {
+                if (currentLang === 'ar') {
+                    option.textContent = option.getAttribute('data-ar');
+                } else {
+                    option.textContent = option.dataset.originalText || option.value;
+                }
+            });
+
+            if (!document.querySelector('select option').dataset.originalText) {
+                document.querySelectorAll('select option').forEach(option => {
+                    option.dataset.originalText = option.textContent;
+                });
+            }
+
+            document.title = currentLang === 'ar' ? document.querySelector('title').getAttribute('data-ar') : 'Task Manager';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[data-ar]').forEach(elem => {
+                elem.dataset.originalText = elem.textContent;
+            });
+            document.querySelectorAll('[data-ar-placeholder]').forEach(elem => {
+                elem.dataset.originalPlaceholder = elem.placeholder;
+            });
+            document.querySelectorAll('select option').forEach(option => {
+                option.dataset.originalText = option.textContent;
+            });
+        });
+
+        langToggle.addEventListener('click', toggleLanguage);
+    </script>
+</body>
+</html>
